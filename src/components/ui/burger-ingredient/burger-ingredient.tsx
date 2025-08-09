@@ -9,7 +9,7 @@ import {
 } from '@zlden/react-developer-burger-ui-components';
 
 import { TBurgerIngredientUIProps } from './type';
-import { openModal } from '../../../slices/burgerConstructorSlice';
+import { openModal } from '../../../slices/modalSlice';
 import { useDispatch } from '../../../services/store';
 
 export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(

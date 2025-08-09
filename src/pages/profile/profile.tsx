@@ -4,7 +4,7 @@ import {
   fetchUpdateUser,
   selectLoading,
   selectUser
-} from '../../slices/burgerConstructorSlice';
+} from '../../slices/userSlice';
 import { Preloader } from '@ui';
 import { useSelector, useDispatch } from '../../services/store';
 

@@ -1,14 +1,8 @@
 import { FC, SyntheticEvent, useEffect, useState, useCallback } from 'react';
 import { LoginUI } from '@ui-pages';
-import {
-  fetchLoginUser,
-  selectLoading
-} from '../../slices/burgerConstructorSlice';
+import { fetchLoginUser, selectLoading } from '../../slices/userSlice';
 import { useDispatch, useSelector } from '../../services/store';
-import {
-  selectErrorText,
-  clearError
-} from '../../slices/burgerConstructorSlice';
+import { selectErrorText, clearError } from '../../slices/userSlice';
 import { Preloader } from '@ui';
 import { setCookie } from '../../utils/cookie';
 
@@ -37,7 +31,7 @@ export const Login: FC = () => {
         })
         .catch((err) => console.error('Ошибка входа:', err?.message));
     },
-    [dispatch]
+    [dispatch, email, password]
   );
 
   if (isLoading) {

@@ -3,10 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
 import { Preloader } from '../ui/preloader';
-import { selectIngredients } from '../../slices/burgerConstructorSlice';
+import { selectIngredients } from '../../slices/ingredientsSlice';
 import { useSelector } from '../../services/store';
 
-export const IngredientDetails: FC = () => {
+type IngredientDetailsProps = {
+  title?: string;
+};
+
+export const IngredientDetails: FC<IngredientDetailsProps> = ({ title }) => {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
 
@@ -23,5 +27,5 @@ export const IngredientDetails: FC = () => {
     return <Preloader />;
   }
 
-  return <IngredientDetailsUI ingredientData={ingredientData} />;
+  return <IngredientDetailsUI ingredientData={ingredientData} title={title} />;
 };

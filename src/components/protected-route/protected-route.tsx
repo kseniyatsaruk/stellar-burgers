@@ -1,9 +1,6 @@
 import { FC, useMemo } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import {
-  selectIsAuthenticated,
-  selectIsInit
-} from '../../slices/burgerConstructorSlice';
+import { selectIsAuthenticated, selectIsInit } from '../../slices/userSlice';
 import { Preloader } from '../ui/preloader';
 import { useSelector } from '../../services/store';
 

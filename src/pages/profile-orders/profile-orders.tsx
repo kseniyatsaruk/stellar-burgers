@@ -1,11 +1,11 @@
 import { ProfileOrdersUI } from '@ui-pages';
 import { FC, useEffect } from 'react';
 import {
-  fetchIngredients,
   fetchUserOrderHistory,
   clearUserOrders,
   selectUserOrders
-} from '../../slices/burgerConstructorSlice';
+} from '../../slices/orderSlice';
+import { fetchIngredients } from '../../slices/ingredientsSlice';
 import { Preloader } from '@ui';
 import { useSelector, useDispatch } from '../../services/store';
 
@@ -14,11 +14,13 @@ export const ProfileOrders: FC = () => {
   const orders = useSelector(selectUserOrders);
 
   useEffect(() => {
-    dispatch(clearUserOrders());
     Promise.all([
       dispatch(fetchIngredients()),
       dispatch(fetchUserOrderHistory())
     ]);
+    return () => {
+      dispatch(clearUserOrders());
+    };
   }, [dispatch]);
 
   if (!orders) {

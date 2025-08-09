@@ -1,5 +1,5 @@
 export type TConstructorItems = {
-  bun: Partial<TIngredient>;
+  bun: Partial<TIngredient> | null;
   ingredients: TIngredientUnique[];
 };
 

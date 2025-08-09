@@ -6,7 +6,7 @@ import {
   clearError,
   selectErrorText,
   selectLoading
-} from '../../slices/burgerConstructorSlice';
+} from '../../slices/userSlice';
 import { Preloader } from '@ui';
 import { useSelector, useDispatch } from '../../services/store';
 import { setCookie } from '../../utils/cookie';

@@ -1,6 +1,6 @@
 import { FC, memo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { addIngredient } from '../../slices/burgerConstructorSlice';
+import { addIngredient } from '../../slices/constructorSlice';
 import { useDispatch } from '../../services/store';
 
 import { BurgerIngredientUI } from '@ui';

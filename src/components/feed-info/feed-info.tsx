@@ -3,7 +3,7 @@ import {
   selectFeedOrders,
   selectTodayOrders,
   selectTotalOrders
-} from '../../slices/burgerConstructorSlice';
+} from '../../slices/feedSlice';
 import { useSelector } from '../../services/store';
 
 import { TOrder } from '@utils-types';

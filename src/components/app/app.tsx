@@ -21,17 +21,16 @@ import {
   OrderInfo,
   ProtectedRoute
 } from '@components';
+import { closeModal, selectIsModalOpened } from '../../slices/modalSlice';
 import {
-  closeModal,
-  fetchAllOrders,
-  fetchIngredients,
-  getUserThunk,
-  initializeApp,
-  selectIngredients,
   selectIsAuthenticated,
-  selectIsModalOpened,
-  selectFeedOrders
-} from '../../slices/burgerConstructorSlice';
+  getUserThunk,
+  initializeApp
+} from '../../slices/userSlice';
+import {
+  fetchIngredients,
+  selectIngredients
+} from '../../slices/ingredientsSlice';
 import { deleteCookie, getCookie } from '../../utils/cookie';
 import { useDispatch, useSelector } from '../../services/store';
 
@@ -43,7 +42,6 @@ const App = () => {
   const token = getCookie('accessToken');
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const ingredients = useSelector(selectIngredients);
-  const feed = useSelector(selectFeedOrders);
 
   useEffect(() => {
     if (!isAuthenticated && token) {
@@ -65,11 +63,7 @@ const App = () => {
     if (!ingredients.length) {
       dispatch(fetchIngredients());
     }
-
-    if (!feed.length) {
-      dispatch(fetchAllOrders());
-    }
-  }, [dispatch, ingredients.length, feed.length]);
+  }, [dispatch, ingredients.length]);
 
   const handleCloseModal = useCallback(() => {
     dispatch(closeModal());
@@ -130,13 +124,16 @@ const App = () => {
           }
         />
         <Route path='*' element={<NotFound404 />} />
-        <Route path='/feed/:number' element={<OrderInfo />} />
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        <Route path='/feed/:number' element={<OrderInfo isTitle />} />
+        <Route
+          path='/ingredients/:id'
+          element={<IngredientDetails title='Детали ингредиента' />}
+        />
         <Route
           path='/profile/orders/:number'
           element={
             <ProtectedRoute>
-              <OrderInfo />
+              <OrderInfo isTitle />
             </ProtectedRoute>
           }
         />
@@ -147,7 +144,7 @@ const App = () => {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal title={'Описание ингредиента'} onClose={handleCloseModal}>
+              <Modal title={'Детали ингредиента'} onClose={handleCloseModal}>
                 <IngredientDetails />
               </Modal>
             }
@@ -156,7 +153,7 @@ const App = () => {
             path='/profile/orders/:number'
             element={
               <ProtectedRoute>
-                <Modal title={'Заказ'} onClose={handleCloseModal}>
+                <Modal title={'#'} onClose={handleCloseModal}>
                   <OrderInfo />
                 </Modal>
               </ProtectedRoute>
@@ -165,7 +162,7 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title={'Заказ'} onClose={handleCloseModal}>
+              <Modal title={'#'} onClose={handleCloseModal}>
                 <OrderInfo />
               </Modal>
             }

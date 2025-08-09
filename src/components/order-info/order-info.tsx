@@ -1,23 +1,47 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from '../../services/store';
+import { useSelector, useDispatch } from '../../services/store';
+import { selectIngredients } from '../../slices/ingredientsSlice';
+import { fetchAllOrders, selectFeedOrders } from '../../slices/feedSlice';
 import {
-  selectFeedOrders,
-  selectIngredients
-} from '../../slices/burgerConstructorSlice';
+  fetchUserOrderHistory,
+  selectUserOrders
+} from '../../slices/orderSlice';
 
-export const OrderInfo: FC = () => {
+type OrderInfoProps = {
+  isTitle?: boolean;
+};
+
+export const OrderInfo: FC<OrderInfoProps> = ({ isTitle }) => {
+  const dispatch = useDispatch();
   const params = useParams<{ number: string }>();
   const orders = useSelector(selectFeedOrders);
+  const userOrders = useSelector(selectUserOrders);
   const navigate = useNavigate();
   const ingredients: TIngredient[] = useSelector(selectIngredients);
 
+  const isProfileOrder = location.pathname.includes('/profile/orders');
+  const ordersSource = isProfileOrder ? userOrders ?? [] : orders ?? [];
+  const title = `#${params.number}`;
+
+  useEffect(() => {
+    if (isProfileOrder) {
+      if (!userOrders?.length) {
+        dispatch(fetchUserOrderHistory());
+      }
+    } else {
+      if (!orders?.length) {
+        dispatch(fetchAllOrders());
+      }
+    }
+  }, [dispatch, isProfileOrder]);
+
   const orderNumber = useMemo(() => {
     if (!params.number) {
-      navigate('/feed', { replace: true });
+      navigate(isProfileOrder ? '/profile/orders' : '/feed', { replace: true });
       return null;
     }
     return parseInt(params.number);
@@ -25,8 +49,8 @@ export const OrderInfo: FC = () => {
 
   const orderData = useMemo(() => {
     if (!orderNumber) return null;
-    return orders.find((item) => item.number === orderNumber);
-  }, [orderNumber, orders]);
+    return ordersSource.find((item) => item.number === orderNumber);
+  }, [orderNumber, ordersSource]);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
@@ -74,5 +98,5 @@ export const OrderInfo: FC = () => {
     return <Preloader />;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo} />;
+  return <OrderInfoUI orderInfo={orderInfo} title={isTitle ? title : ''} />;
 };
