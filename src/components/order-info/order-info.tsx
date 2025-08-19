@@ -1,21 +1,56 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from '../../services/store';
+import { selectIngredients } from '../../slices/ingredientsSlice';
+import { fetchAllOrders, selectFeedOrders } from '../../slices/feedSlice';
+import {
+  fetchUserOrderHistory,
+  selectUserOrders
+} from '../../slices/orderSlice';
 
-export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+type OrderInfoProps = {
+  isTitle?: boolean;
+};
 
-  const ingredients: TIngredient[] = [];
+export const OrderInfo: FC<OrderInfoProps> = ({ isTitle }) => {
+  const dispatch = useDispatch();
+  const params = useParams<{ number: string }>();
+  const orders = useSelector(selectFeedOrders);
+  const userOrders = useSelector(selectUserOrders);
+  const navigate = useNavigate();
+  const ingredients: TIngredient[] = useSelector(selectIngredients);
+
+  const isProfileOrder = location.pathname.includes('/profile/orders');
+  const ordersSource = isProfileOrder ? userOrders ?? [] : orders ?? [];
+  const title = `#${params.number}`;
+
+  useEffect(() => {
+    if (isProfileOrder) {
+      if (!userOrders?.length) {
+        dispatch(fetchUserOrderHistory());
+      }
+    } else {
+      if (!orders?.length) {
+        dispatch(fetchAllOrders());
+      }
+    }
+  }, [dispatch, isProfileOrder]);
+
+  const orderNumber = useMemo(() => {
+    if (!params.number) {
+      navigate(isProfileOrder ? '/profile/orders' : '/feed', { replace: true });
+      return null;
+    }
+    return parseInt(params.number);
+  }, [params.number, navigate]);
+
+  const orderData = useMemo(() => {
+    if (!orderNumber) return null;
+    return ordersSource.find((item) => item.number === orderNumber);
+  }, [orderNumber, ordersSource]);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
@@ -63,5 +98,5 @@ export const OrderInfo: FC = () => {
     return <Preloader />;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo} />;
+  return <OrderInfoUI orderInfo={orderInfo} title={isTitle ? title : ''} />;
 };

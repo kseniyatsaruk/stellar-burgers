@@ -1,6 +1,8 @@
 .wrap {
   margin: 0 auto;
   width: 640px;
+  height: inherit;
+  align-content: center;
 }
 .number {
   text-align: center;
